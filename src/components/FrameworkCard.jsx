@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Calendar, CircleArrowRight as ArrowRightCircle } from 'lucide-react';
+import { Calendar, ArrowRightCircle } from 'lucide-react';
 import { getSeverityColor } from './convergenceData';
 import clsx from 'clsx';
 
