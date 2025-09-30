@@ -1,14 +1,39 @@
 // src/components/convergenceData.js
+import { TrendingUp, Users, Cpu, Leaf, Globe, Grid } from 'lucide-react';
 
 // Categories for filtering
-export const categories = [
-  { id: 'all', name: 'All Categories', color: 'text-gray-400' },
-  { id: 'economic', name: 'Economic', color: 'text-red-400' },
-  { id: 'social', name: 'Social', color: 'text-blue-400' },
-  { id: 'technological', name: 'Technology', color: 'text-green-400' },
-  { id: 'environmental', name: 'Environment', color: 'text-yellow-400' },
-  { id: 'geopolitical', name: 'Geopolitical', color: 'text-purple-400' }
-];
+export const categories = {
+  all: {
+    label: 'All Categories',
+    icon: Grid,
+    classes: 'bg-gray-700 text-gray-100 hover:bg-gray-600 ring-gray-500'
+  },
+  economic: {
+    label: 'Economic',
+    icon: TrendingUp,
+    classes: 'bg-red-600 text-white hover:bg-red-500 ring-red-400'
+  },
+  social: {
+    label: 'Social',
+    icon: Users,
+    classes: 'bg-blue-600 text-white hover:bg-blue-500 ring-blue-400'
+  },
+  technological: {
+    label: 'Technology',
+    icon: Cpu,
+    classes: 'bg-green-600 text-white hover:bg-green-500 ring-green-400'
+  },
+  environmental: {
+    label: 'Environment',
+    icon: Leaf,
+    classes: 'bg-yellow-600 text-white hover:bg-yellow-500 ring-yellow-400'
+  },
+  geopolitical: {
+    label: 'Geopolitical',
+    icon: Globe,
+    classes: 'bg-purple-600 text-white hover:bg-purple-500 ring-purple-400'
+  }
+};
 
 // Severity color mapping function
 export const getSeverityColor = (severity) => {
