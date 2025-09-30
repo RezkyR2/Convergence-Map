@@ -47,6 +47,15 @@ This is a React-based visualization application that displays a convergence map 
   - Enhanced Timeline with custom scrollbar and touch support
   - Optimized spacing, padding, and layout density for all screen sizes
 
+- **2025-09-30**: Added comprehensive framework data (42 frameworks)
+  - Added 13 Economic frameworks (Kondratiev, Great Depression, Debt cycles, etc.)
+  - Added 5 Generational frameworks (Fourth Turning, wealth transfer, etc.)
+  - Added 9 Technology frameworks (AGI, AI disruption, Moore's Law, etc.)
+  - Added 8 Geopolitical frameworks (Thucydides Trap, hegemonic cycles, etc.)
+  - Added 7 Climate frameworks (tipping points, water crisis, permafrost, etc.)
+  - Added new categories: Generational and Climate
+  - Peak convergence now shows 2028 with 12 overlapping frameworks
+
 ## Development
 - **Dev Server**: `npm run dev` - Runs on port 5000
 - **Build**: `npm run build` - Builds for production
@@ -58,9 +67,10 @@ This is a React-based visualization application that displays a convergence map 
 - **Run Command**: `npx vite preview --host 0.0.0.0 --port 5000`
 
 ## Key Features
-- Interactive convergence map visualization
-- Category-based filtering (Economic, Social, Technology, Environment, Geopolitical)
+- Interactive convergence map visualization with 42 frameworks
+- Category-based filtering (Economic, Generational, Technology, Environment, Climate, Geopolitical)
 - Detailed modal views for framework analysis
-- Timeline comparisons and risk indicators
-- Responsive design with Tailwind CSS
+- Timeline comparisons showing peak convergence years (2027-2028)
+- Risk indicators with severity and confidence ratings
+- Responsive design with Tailwind CSS for all device sizes
 - Smooth animations with Framer Motion
