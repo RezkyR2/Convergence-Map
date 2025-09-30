@@ -2,9 +2,9 @@
 import React, { useMemo } from 'react';
 
 const StatBox = ({ value, label, colorClass }) => (
-    <div className="bg-gray-800 p-4 rounded-lg text-center">
-        <div className={`text-3xl font-bold ${colorClass}`}>{value}</div>
-        <div className="text-sm text-gray-400">{label}</div>
+    <div className="bg-gray-800 p-3 sm:p-4 md:p-5 rounded-lg text-center">
+        <div className={`text-2xl sm:text-3xl md:text-3xl font-bold ${colorClass}`}>{value}</div>
+        <div className="text-xs sm:text-sm text-gray-400 mt-1">{label}</div>
     </div>
 );
 
@@ -21,7 +21,7 @@ const StatsSummary = ({ frameworks }) => {
     }, [frameworks]);
 
     return (
-        <section className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4">
+        <section className="mt-8 sm:mt-10 md:mt-12 grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
             <StatBox value={stats.total} label="Total Frameworks" colorClass="text-blue-400" />
             <StatBox value={stats.critical} label="Severity 90+" colorClass="text-red-400" />
             <StatBox value={stats.highConfidence} label="Confidence 85+" colorClass="text-green-400" />

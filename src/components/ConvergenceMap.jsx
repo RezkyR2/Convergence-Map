@@ -60,9 +60,9 @@ const ResonanceDetailModal = ({ onClose }) => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
     >
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4">
         <motion.div
-          className="relative w-full max-w-7xl h-[95vh] bg-white rounded-xl shadow-2xl flex flex-col"
+          className="relative w-full max-w-7xl h-[90vh] sm:h-[95vh] bg-white rounded-xl shadow-2xl flex flex-col"
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.9 }}
@@ -78,32 +78,32 @@ const ResonanceDetailModal = ({ onClose }) => {
 
           <div className="overflow-hidden flex flex-col h-full">
             {/* Header */}
-            <div className="bg-gradient-to-r from-red-600 to-orange-600 text-white p-6 flex-shrink-0">
-              <div className="flex items-center gap-4">
-                <AlertTriangle size={32} />
+            <div className="bg-gradient-to-r from-red-600 to-orange-600 text-white p-3 sm:p-4 md:p-6 flex-shrink-0">
+              <div className="flex items-center gap-2 sm:gap-4">
+                <AlertTriangle className="w-6 h-6 sm:w-8 sm:h-8 flex-shrink-0" />
                 <div>
-                  <h1 className="text-2xl font-bold">Great Depression 100-Year Resonance</h1>
-                  <p className="text-red-100">Historical Pattern Analysis: 1929 → 2029</p>
+                  <h1 className="text-base sm:text-xl md:text-2xl font-bold">Great Depression 100-Year Resonance</h1>
+                  <p className="text-xs sm:text-sm text-red-100">Historical Pattern Analysis: 1929 → 2029</p>
                 </div>
               </div>
-              <div className="mt-4 grid grid-cols-3 gap-4 text-center">
+              <div className="mt-3 sm:mt-4 grid grid-cols-3 gap-2 sm:gap-4 text-center">
                 <div>
-                  <div className="text-3xl font-bold">2029</div>
-                  <div className="text-sm text-red-100">Peak Year</div>
+                  <div className="text-xl sm:text-2xl md:text-3xl font-bold">2029</div>
+                  <div className="text-xs sm:text-sm text-red-100">Peak Year</div>
                 </div>
                 <div>
-                  <div className="text-3xl font-bold">95%</div>
-                  <div className="text-sm text-red-100">Severity</div>
+                  <div className="text-xl sm:text-2xl md:text-3xl font-bold">95%</div>
+                  <div className="text-xs sm:text-sm text-red-100">Severity</div>
                 </div>
                 <div>
-                  <div className="text-3xl font-bold">70%</div>
-                  <div className="text-sm text-red-100">Confidence</div>
+                  <div className="text-xl sm:text-2xl md:text-3xl font-bold">70%</div>
+                  <div className="text-xs sm:text-sm text-red-100">Confidence</div>
                 </div>
               </div>
             </div>
 
             {/* Tabs */}
-            <div className="flex border-b flex-shrink-0">
+            <div className="flex border-b flex-shrink-0 overflow-x-auto">
               {[
                 { id: 'timeline', label: 'Timeline', icon: Calendar },
                 { id: 'comparison', label: 'Comparison', icon: TrendingUp },
@@ -112,41 +112,41 @@ const ResonanceDetailModal = ({ onClose }) => {
                 <button
                   key={id}
                   onClick={() => setActiveTab(id)}
-                  className={`flex items-center gap-2 px-6 py-3 font-medium transition-colors ${
+                  className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 md:px-6 py-2.5 sm:py-3 font-medium transition-colors whitespace-nowrap text-xs sm:text-sm md:text-base ${
                     activeTab === id
                       ? 'border-b-2 border-red-500 text-red-600 bg-red-50'
                       : 'text-gray-600 hover:text-red-600 hover:bg-gray-50'
                   }`}
                 >
-                  <Icon size={18} />
-                  {label}
+                  <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <span className="text-xs sm:text-sm md:text-base inline">{label}</span>
                 </button>
               ))}
             </div>
 
             {/* Content */}
-            <div className="p-8 overflow-y-auto flex-grow bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50">
+            <div className="p-3 sm:p-4 md:p-6 lg:p-8 overflow-y-auto flex-grow bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50">
               {activeTab === 'timeline' && (
-                <div className="space-y-6">
-                  <h2 className="text-xl font-bold text-gray-800">Historical Timeline vs Current Trajectory</h2>
-                  <div className="bg-white p-6 rounded-lg shadow-sm">
-                    <ResponsiveContainer width="100%" height={300}>
+                <div className="space-y-4 sm:space-y-6">
+                  <h2 className="text-base sm:text-lg md:text-xl font-bold text-gray-800">Historical Timeline vs Current Trajectory</h2>
+                  <div className="bg-white p-3 sm:p-4 md:p-6 rounded-lg shadow-sm">
+                    <ResponsiveContainer width="100%" height={250}>
                       <LineChart data={timelineData}>
                         <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="year" />
-                        <YAxis />
+                        <XAxis dataKey="year" tick={{ fontSize: 12 }} />
+                        <YAxis tick={{ fontSize: 12 }} />
                         <Tooltip />
-                        <Legend />
-                        <Line type="monotone" dataKey="severity" stroke="#dc2626" strokeWidth={3} />
+                        <Legend wrapperStyle={{ fontSize: '12px' }} />
+                        <Line type="monotone" dataKey="severity" stroke="#dc2626" strokeWidth={2} />
                       </LineChart>
                     </ResponsiveContainer>
                   </div>
-                  <div className="grid gap-4">
+                  <div className="grid gap-3 sm:gap-4">
                     {keyEvents.map((event, index) => (
-                      <div key={index} className="bg-white p-4 rounded-lg shadow-sm border-l-4 border-red-500">
-                        <div className="font-semibold text-gray-800">{event.date}</div>
-                        <div className="text-gray-700">{event.event}</div>
-                        <div className="text-sm text-gray-600 mt-1">{event.impact}</div>
+                      <div key={index} className="bg-white p-3 sm:p-4 rounded-lg shadow-sm border-l-4 border-red-500">
+                        <div className="text-sm sm:text-base font-semibold text-gray-800">{event.date}</div>
+                        <div className="text-sm sm:text-base text-gray-700">{event.event}</div>
+                        <div className="text-xs sm:text-sm text-gray-600 mt-1">{event.impact}</div>
                       </div>
                     ))}
                   </div>
@@ -154,24 +154,24 @@ const ResonanceDetailModal = ({ onClose }) => {
               )}
 
               {activeTab === 'comparison' && (
-                <div className="space-y-6">
-                  <h2 className="text-xl font-bold text-gray-800">1929 vs 2024 Structural Comparison</h2>
-                  <div className="bg-white p-6 rounded-lg shadow-sm">
-                    <ResponsiveContainer width="100%" height={400}>
+                <div className="space-y-4 sm:space-y-6">
+                  <h2 className="text-base sm:text-lg md:text-xl font-bold text-gray-800">1929 vs 2024 Structural Comparison</h2>
+                  <div className="bg-white p-3 sm:p-4 md:p-6 rounded-lg shadow-sm">
+                    <ResponsiveContainer width="100%" height={300}>
                       <BarChart data={comparisonData}>
                         <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="metric" />
-                        <YAxis />
+                        <XAxis dataKey="metric" tick={{ fontSize: 10 }} angle={-15} textAnchor="end" height={60} />
+                        <YAxis tick={{ fontSize: 12 }} />
                         <Tooltip />
-                        <Legend />
+                        <Legend wrapperStyle={{ fontSize: '12px' }} />
                         <Bar dataKey="1929" fill="#dc2626" />
                         <Bar dataKey="2024" fill="#ea580c" />
                       </BarChart>
                     </ResponsiveContainer>
                   </div>
-                  <div className="bg-white p-6 rounded-lg shadow-sm">
-                    <h3 className="font-semibold text-gray-800 mb-4">Key Similarities</h3>
-                    <ul className="space-y-2 text-gray-700">
+                  <div className="bg-white p-3 sm:p-4 md:p-6 rounded-lg shadow-sm">
+                    <h3 className="text-sm sm:text-base font-semibold text-gray-800 mb-3 sm:mb-4">Key Similarities</h3>
+                    <ul className="space-y-2 text-xs sm:text-sm text-gray-700">
                       <li>• Extreme wealth inequality reaching historical peaks</li>
                       <li>• Widespread speculation in new technologies</li>
                       <li>• High debt levels across all sectors</li>
@@ -183,14 +183,14 @@ const ResonanceDetailModal = ({ onClose }) => {
               )}
 
               {activeTab === 'risks' && (
-                <div className="space-y-6">
-                  <h2 className="text-xl font-bold text-gray-800">Current Risk Indicators</h2>
-                  <div className="grid gap-4">
+                <div className="space-y-4 sm:space-y-6">
+                  <h2 className="text-base sm:text-lg md:text-xl font-bold text-gray-800">Current Risk Indicators</h2>
+                  <div className="grid gap-3 sm:gap-4">
                     {riskIndicators.map((indicator, index) => (
-                      <div key={index} className="bg-white p-4 rounded-lg shadow-sm">
-                        <div className="flex justify-between items-center mb-2">
-                          <span className="font-medium text-gray-800">{indicator.name}</span>
-                          <span className={`px-2 py-1 rounded text-sm font-medium ${getRiskColor(indicator.status)}`}>
+                      <div key={index} className="bg-white p-3 sm:p-4 rounded-lg shadow-sm">
+                        <div className="flex justify-between items-center mb-2 gap-2">
+                          <span className="text-sm sm:text-base font-medium text-gray-800">{indicator.name}</span>
+                          <span className={`px-2 py-1 rounded text-xs sm:text-sm font-medium ${getRiskColor(indicator.status)} whitespace-nowrap`}>
                             {indicator.status.toUpperCase()}
                           </span>
                         </div>
@@ -202,7 +202,7 @@ const ResonanceDetailModal = ({ onClose }) => {
                             style={{ width: `${indicator.current}%` }}
                           />
                         </div>
-                        <div className="flex justify-between text-sm text-gray-600 mt-1">
+                        <div className="flex justify-between text-xs sm:text-sm text-gray-600 mt-1">
                           <span>Current: {indicator.current}%</span>
                           <span>Threshold: {indicator.threshold}%</span>
                         </div>
@@ -213,7 +213,7 @@ const ResonanceDetailModal = ({ onClose }) => {
               )}
             </div>
 
-            <div className="mt-auto flex-shrink-0 text-center text-sm text-slate-600 bg-white p-3 border-t">
+            <div className="mt-auto flex-shrink-0 text-center text-xs sm:text-sm text-slate-600 bg-white p-2 sm:p-3 border-t">
               Analysis based on historical patterns, economic indicators, and structural similarities
             </div>
           </div>
@@ -270,32 +270,32 @@ const ConvergenceMap = () => {
 
   return (
     <>
-      <div className="min-h-screen bg-gray-900 text-gray-200 font-sans p-4 sm:p-6 lg:p-8">
+      <div className="min-h-screen bg-gray-900 text-gray-200 font-sans p-3 sm:p-4 md:p-6 lg:p-8">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
-          <header className="text-center mb-8">
-            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-red-400 via-orange-400 to-yellow-400 bg-clip-text text-transparent mb-4">
+          <header className="text-center mb-6 sm:mb-8">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-red-400 via-orange-400 to-yellow-400 bg-clip-text text-transparent mb-3 sm:mb-4 px-2">
               Convergence Map 2024-2032
             </h1>
-            <p className="text-lg text-gray-400 max-w-3xl mx-auto">
+            <p className="text-sm sm:text-base md:text-lg text-gray-400 max-w-3xl mx-auto px-4">
               Mapping critical convergence points where multiple crisis frameworks align. 
               Peak convergence in <span className="text-red-400 font-bold">{convergenceInfo.maxPeakYear}</span> with {convergenceInfo.maxCount} overlapping frameworks.
             </p>
           </header>
 
           {/* Controls */}
-          <div className="sticky top-0 z-10 bg-gray-900/80 backdrop-blur-sm py-4 mb-8">
+          <div className="sticky top-0 z-10 bg-gray-900/80 backdrop-blur-sm py-3 sm:py-4 mb-6 sm:mb-8">
             <CategoryFilter 
               categories={categories}
               selectedCategory={selectedCategory}
               setSelectedCategory={setSelectedCategory}
             />
             
-            <div className="flex justify-center mt-4">
+            <div className="flex justify-center mt-3 sm:mt-4">
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="bg-gray-800 text-gray-200 px-4 py-2 rounded-lg border border-gray-700 focus:border-red-500 focus:outline-none"
+                className="bg-gray-800 text-gray-200 px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base rounded-lg border border-gray-700 focus:border-red-500 focus:outline-none"
               >
                 <option value="peak">Sort by Peak Year</option>
                 <option value="severity">Sort by Severity</option>
@@ -308,7 +308,7 @@ const ConvergenceMap = () => {
           <Timeline frameworks={filteredFrameworks} setPinnedFramework={setPinnedFramework} />
           
           {/* Framework Cards */}
-          <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {filteredFrameworks.map((framework) => (
               <FrameworkCard 
                 key={framework.name} 
