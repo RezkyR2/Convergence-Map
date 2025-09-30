@@ -57,16 +57,13 @@ const AnalyticsDashboard = () => {
         const cat1Frameworks = frameworks.filter(f => f.category === cats[i]);
         const cat2Frameworks = frameworks.filter(f => f.category === cats[j]);
         
-        let overlap = 0;
+        let overlapCount = 0;
         cat1Frameworks.forEach(f1 => {
-          cat2Frameworks.forEach(f2 => {
-            if (Math.abs(f1.peak - f2.peak) <= 2) {
-              overlap++;
-            }
-          });
+          const hasOverlap = cat2Frameworks.some(f2 => Math.abs(f1.peak - f2.peak) <= 2);
+          if (hasOverlap) overlapCount++;
         });
         
-        const correlation = overlap / Math.min(cat1Frameworks.length, cat2Frameworks.length) * 100;
+        const correlation = Math.min(100, (overlapCount / cat1Frameworks.length) * 100);
         if (correlation > 10) {
           correlations.push({
             pair: `${cats[i]}-${cats[j]}`,
@@ -246,22 +243,22 @@ const AnalyticsDashboard = () => {
           </h3>
           <div className="space-y-3">
             {analytics.correlations.slice(0, 6).map((corr, index) => (
-              <div key={index} className="flex items-center justify-between p-3 bg-gray-900 border border-gray-800 rounded-lg">
+              <div key={index} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-3 bg-gray-900 border border-gray-800 rounded-lg">
                 <span className="text-sm text-white font-medium">{corr.pair}</span>
                 <div className="flex items-center gap-3">
-                  <div className="w-32 bg-gray-800 rounded-full h-2">
+                  <div className="flex-1 sm:w-24 md:w-32 bg-gray-800 rounded-full h-2 overflow-hidden">
                     <div 
-                      className="bg-yellow-500 h-2 rounded-full" 
-                      style={{ width: `${corr.correlation}%` }}
+                      className="bg-yellow-500 h-2 rounded-full transition-all duration-300" 
+                      style={{ width: `${Math.min(100, corr.correlation)}%` }}
                     />
                   </div>
-                  <span className="text-sm font-bold text-yellow-400 w-12 text-right">{corr.correlation}%</span>
+                  <span className="text-sm font-bold text-yellow-400 w-12 text-right shrink-0">{corr.correlation}%</span>
                 </div>
               </div>
             ))}
           </div>
           <p className="text-xs text-gray-400 mt-3">
-            Correlation based on frameworks peaking within 2 years of each other
+            Correlation: % of frameworks in first category that peak within 2 years of second category
           </p>
         </div>
 
