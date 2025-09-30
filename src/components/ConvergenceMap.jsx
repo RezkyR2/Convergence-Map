@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, Cell } from 'recharts';
-import { AlertTriangle, X, TrendingUp, Calendar, Activity } from 'lucide-react';
+import { TriangleAlert as AlertTriangle, X, TrendingUp, Calendar, Activity } from 'lucide-react';
 
 // Import komponen anak
 import { frameworks, categories, getSeverityColor } from './convergenceData';
