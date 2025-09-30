@@ -1,0 +1,341 @@
+import React, { useState, useEffect } from 'react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from 'recharts';
+import { Play, Pause, RotateCcw, Zap, Globe } from 'lucide-react';
+
+const CivilizationCycleModel = () => {
+  const [isRunning, setIsRunning] = useState(false);
+  const [year, setYear] = useState(0);
+  const [data, setData] = useState([]);
+  const [speed, setSpeed] = useState(50);
+  
+  const calculateCycle = (t) => {
+    // Siklus iklim (100 tahun)
+    const climate = 50 + 30 * Math.sin(t / 100 * 2 * Math.PI);
+    
+    // Siklus generasi (80 tahun)
+    const generation = 50 + 25 * Math.sin(t / 80 * 2 * Math.PI + Math.PI/4);
+    
+    // TEKNOLOGI - pertumbuhan eksponensial dengan plateau
+    const techGrowth = Math.min(95, 20 + (t / 3)); // Akselerasi teknologi
+    const techCycle = 50 + 20 * Math.sin(t / 60 * 2 * Math.PI); // Siklus adopsi
+    const technology = (techGrowth + techCycle) / 2;
+    
+    // PERGESERAN POROS KEKUASAAN (200-250 tahun) - Timur ke Barat, Barat ke Timur
+    const powerShift = Math.sin(t / 225 * 2 * Math.PI); // -1 = Timur dominan, +1 = Barat dominan
+    
+    // Kekuatan Timur dan Barat (saling berlawanan)
+    const eastPower = 50 + 40 * (-powerShift) + 10 * Math.sin(t / 70 * 2 * Math.PI);
+    const westPower = 50 + 40 * powerShift + 10 * Math.sin(t / 70 * 2 * Math.PI + Math.PI);
+    
+    // KETIMPANGAN ADAPTASI - gap antara yang cepat dan lambat adopsi teknologi
+    const adaptationGap = Math.abs(Math.sin(t / 50 * 2 * Math.PI)) * technology / 2;
+    const inequality = 30 + adaptationGap + (technology - 50) * 0.3;
+    
+    // KONFLIK - meningkat saat pergeseran kekuasaan dan ketimpangan tinggi
+    const powerTransition = Math.abs(powerShift) < 0.3 ? 30 : 0; // Zona transisi = konflik tinggi
+    const conflict = 20 + powerTransition + (inequality - 50) * 0.5 + Math.abs(eastPower - westPower) * 0.3;
+    
+    // Populasi - dipengaruhi teknologi, iklim, tapi ditekan oleh konflik
+    const popBase = 50 + 20 * Math.sin(t / 90 * 2 * Math.PI);
+    const population = Math.max(10, popBase + (climate - 50) * 0.3 + (technology - 50) * 0.2 - (conflict - 40) * 0.3);
+    
+    // Ekonomi - didorong teknologi, tapi rusak oleh konflik dan ketimpangan
+    const ecoBase = 50 + 25 * Math.sin(t / 85 * 2 * Math.PI - Math.PI/3);
+    const economy = Math.max(10, ecoBase + (technology - 50) * 0.4 + (climate - 50) * 0.3 - (conflict - 40) * 0.4 - (inequality - 50) * 0.2);
+    
+    // Stabilitas peradaban - agregat dengan penalti konflik dan ketimpangan
+    const stability = Math.max(5, (climate + generation + population + economy + technology) / 5 - (conflict - 40) * 0.5 - (inequality - 50) * 0.3);
+    
+    // Determine dominant power
+    const dominantPower = eastPower > westPower + 10 ? 'Timur' : westPower > eastPower + 10 ? 'Barat' : 'Transisi';
+    
+    return {
+      year: t,
+      iklim: Math.round(climate),
+      generasi: Math.round(generation),
+      populasi: Math.round(population),
+      ekonomi: Math.round(economy),
+      teknologi: Math.round(technology),
+      timur: Math.round(eastPower),
+      barat: Math.round(westPower),
+      ketimpangan: Math.round(inequality),
+      konflik: Math.round(conflict),
+      stabilitas: Math.round(stability),
+      dominantPower
+    };
+  };
+
+  useEffect(() => {
+    if (isRunning) {
+      const interval = setInterval(() => {
+        setYear(prev => {
+          const newYear = prev >= 500 ? 0 : prev + 1;
+          setData(prevData => {
+            const newData = [...prevData, calculateCycle(newYear)];
+            return newData.slice(-200);
+          });
+          return newYear;
+        });
+      }, 101 - speed);
+      
+      return () => clearInterval(interval);
+    }
+  }, [isRunning, speed]);
+
+  const handleReset = () => {
+    setYear(0);
+    setData([calculateCycle(0)]);
+    setIsRunning(false);
+  };
+
+  const getCurrentPhase = () => {
+    if (data.length === 0) return { name: '-', color: 'gray', desc: '' };
+    const latest = data[data.length - 1];
+    
+    if (latest.konflik > 60) return { 
+      name: 'Perang Hegemonik', 
+      color: 'text-red-700',
+      desc: 'Konflik besar untuk menentukan poros kekuasaan baru'
+    };
+    if (latest.stabilitas >= 65 && latest.ketimpangan < 50) return { 
+      name: 'Pax (Kedamaian)', 
+      color: 'text-green-600',
+      desc: 'Hegemon stabil, teknologi merata'
+    };
+    if (latest.stabilitas >= 50) return { 
+      name: 'Pertumbuhan', 
+      color: 'text-blue-600',
+      desc: 'Ekspansi ekonomi dan teknologi'
+    };
+    if (latest.ketimpangan > 65) return { 
+      name: 'Ketimpangan Tinggi', 
+      color: 'text-orange-600',
+      desc: 'Gap adaptasi menciptakan ketegangan sosial'
+    };
+    if (latest.stabilitas >= 35) return { 
+      name: 'Ketegangan', 
+      color: 'text-yellow-600',
+      desc: 'Sistem mulai tidak stabil'
+    };
+    return { 
+      name: 'Krisis Sistemik', 
+      color: 'text-red-600',
+      desc: 'Keruntuhan tatanan lama'
+    };
+  };
+
+  const phase = getCurrentPhase();
+  const latest = data.length > 0 ? data[data.length - 1] : null;
+
+  const radarData = latest ? [
+    { factor: 'Iklim', value: latest.iklim },
+    { factor: 'Teknologi', value: latest.teknologi },
+    { factor: 'Ekonomi', value: latest.ekonomi },
+    { factor: 'Populasi', value: latest.populasi },
+    { factor: 'Stabilitas', value: latest.stabilitas },
+    { factor: 'Konflik (inv)', value: 100 - latest.konflik },
+  ] : [];
+
+  return (
+    <div className="w-full max-w-7xl mx-auto p-6 bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl shadow-lg">
+      <div className="mb-6">
+        <h2 className="text-3xl font-bold text-slate-800 mb-2">Model Siklus Peradaban Global</h2>
+        <p className="text-slate-600">Simulasi kompleks: Iklim × Generasi × Teknologi × Kekuasaan × Ketimpangan × Konflik</p>
+      </div>
+
+      <div className="bg-white rounded-lg p-6 mb-6 shadow">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+          <div className="text-center p-4 bg-blue-50 rounded-lg">
+            <div className="text-3xl font-bold text-blue-600">{year}</div>
+            <div className="text-sm text-slate-600">Tahun</div>
+          </div>
+          
+          <div className="text-center p-4 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg">
+            <div className={`text-lg font-bold ${phase.color}`}>{phase.name}</div>
+            <div className="text-xs text-slate-600">{phase.desc}</div>
+          </div>
+          
+          {latest && (
+            <>
+              <div className="text-center p-4 bg-amber-50 rounded-lg">
+                <Globe className="w-6 h-6 mx-auto mb-1 text-amber-600" />
+                <div className="text-xl font-bold text-amber-800">{latest.dominantPower}</div>
+                <div className="text-xs text-slate-600">Hegemon</div>
+              </div>
+              
+              <div className="text-center p-4 bg-purple-50 rounded-lg">
+                <Zap className="w-6 h-6 mx-auto mb-1 text-purple-600" />
+                <div className="text-2xl font-bold text-purple-600">{latest.teknologi}</div>
+                <div className="text-xs text-slate-600">Teknologi</div>
+              </div>
+              
+              <div className="text-center p-4 bg-red-50 rounded-lg">
+                <div className="text-2xl font-bold text-red-600">{latest.konflik}</div>
+                <div className="text-xs text-slate-600">Tingkat Konflik</div>
+              </div>
+            </>
+          )}
+        </div>
+
+        <div className="flex items-center gap-4 mb-6">
+          <button
+            onClick={() => setIsRunning(!isRunning)}
+            className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-md"
+          >
+            {isRunning ? <Pause size={20} /> : <Play size={20} />}
+            {isRunning ? 'Pause' : 'Mulai'}
+          </button>
+          
+          <button
+            onClick={handleReset}
+            className="flex items-center gap-2 px-6 py-3 bg-slate-600 text-white rounded-lg hover:bg-slate-700 transition-colors shadow-md"
+          >
+            <RotateCcw size={20} />
+            Reset
+          </button>
+
+          <div className="flex-1">
+            <label className="text-sm text-slate-600 mb-1 block">Kecepatan</label>
+            <input
+              type="range"
+              min="1"
+              max="100"
+              value={speed}
+              onChange={(e) => setSpeed(Number(e.target.value))}
+              className="w-full"
+            />
+          </div>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-6 mb-6">
+          <div className="md:col-span-2">
+            <h3 className="text-lg font-bold text-slate-800 mb-3">Timeline Peradaban</h3>
+            <ResponsiveContainer width="100%" height={350}>
+              <LineChart data={data}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                <XAxis 
+                  dataKey="year" 
+                  stroke="#64748b"
+                  tick={{ fontSize: 12 }}
+                />
+                <YAxis 
+                  stroke="#64748b"
+                  tick={{ fontSize: 12 }}
+                />
+                <Tooltip 
+                  contentStyle={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '12px' }}
+                />
+                <Legend wrapperStyle={{ fontSize: '12px' }} />
+                <Line type="monotone" dataKey="teknologi" stroke="#8b5cf6" strokeWidth={2.5} dot={false} name="Teknologi" />
+                <Line type="monotone" dataKey="timur" stroke="#ef4444" strokeWidth={2} dot={false} name="Kekuatan Timur" />
+                <Line type="monotone" dataKey="barat" stroke="#3b82f6" strokeWidth={2} dot={false} name="Kekuatan Barat" />
+                <Line type="monotone" dataKey="konflik" stroke="#dc2626" strokeWidth={2.5} dot={false} name="Konflik" />
+                <Line type="monotone" dataKey="stabilitas" stroke="#10b981" strokeWidth={3} dot={false} name="Stabilitas" />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+
+          <div>
+            <h3 className="text-lg font-bold text-slate-800 mb-3">Status Saat Ini</h3>
+            <ResponsiveContainer width="100%" height={350}>
+              <RadarChart data={radarData}>
+                <PolarGrid stroke="#cbd5e1" />
+                <PolarAngleAxis dataKey="factor" tick={{ fontSize: 11, fill: '#475569' }} />
+                <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fontSize: 10 }} />
+                <Radar name="Indikator" dataKey="value" stroke="#6366f1" fill="#6366f1" fillOpacity={0.6} />
+              </RadarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        <div className="mb-6">
+          <h3 className="text-lg font-bold text-slate-800 mb-3">Faktor Ekonomi dan Ketimpangan</h3>
+          <ResponsiveContainer width="100%" height={250}>
+            <LineChart data={data}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+              <XAxis dataKey="year" stroke="#64748b" tick={{ fontSize: 12 }} />
+              <YAxis stroke="#64748b" tick={{ fontSize: 12 }} />
+              <Tooltip contentStyle={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '12px' }} />
+              <Legend wrapperStyle={{ fontSize: '12px' }} />
+              <Line type="monotone" dataKey="ekonomi" stroke="#f59e0b" strokeWidth={2.5} dot={false} name="Ekonomi" />
+              <Line type="monotone" dataKey="ketimpangan" stroke="#ec4899" strokeWidth={2.5} dot={false} name="Ketimpangan" />
+              <Line type="monotone" dataKey="populasi" stroke="#14b8a6" strokeWidth={2} dot={false} name="Populasi" />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      <div className="grid md:grid-cols-3 gap-6 mb-6">
+        <div className="bg-white rounded-lg p-5 shadow">
+          <h3 className="text-lg font-bold text-slate-800 mb-3 flex items-center gap-2">
+            <Zap className="text-purple-600" size={20} />
+            Teknologi & Adaptasi
+          </h3>
+          <div className="space-y-2 text-sm">
+            <p className="text-slate-700">• <span className="font-semibold">Pertumbuhan eksponensial</span> - teknologi akselerasi terus</p>
+            <p className="text-slate-700">• <span className="font-semibold">Ketimpangan adaptasi</span> - gap antara early adopter vs laggard</p>
+            <p className="text-slate-700">• Teknologi tinggi + ketimpangan tinggi = <span className="text-red-600 font-semibold">ketegangan sosial</span></p>
+            <p className="text-slate-700">• Revolusi teknologi memicu <span className="font-semibold">pergeseran kekuasaan</span></p>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg p-5 shadow">
+          <h3 className="text-lg font-bold text-slate-800 mb-3 flex items-center gap-2">
+            <Globe className="text-blue-600" size={20} />
+            Pergeseran Hegemon
+          </h3>
+          <div className="space-y-2 text-sm">
+            <p className="text-slate-700">• Siklus <span className="font-semibold">200-250 tahun</span>: Timur ⇄ Barat ⇄ Timur</p>
+            <p className="text-slate-700">• <span className="text-red-600 font-semibold">Zona transisi</span> = konflik hegemonik tertinggi</p>
+            <p className="text-slate-700">• Hegemon stabil = periode <span className="text-green-600 font-semibold">Pax</span> (peace)</p>
+            <p className="text-slate-700">• Pergeseran dipicu: teknologi, ekonomi, atau krisis iklim</p>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg p-5 shadow">
+          <h3 className="text-lg font-bold text-slate-800 mb-3">⚔️ Konflik</h3>
+          <div className="space-y-2 text-sm">
+            <p className="text-slate-700">• Meningkat saat <span className="font-semibold">pergeseran kekuasaan</span></p>
+            <p className="text-slate-700">• Dipicu oleh <span className="text-orange-600 font-semibold">ketimpangan tinggi</span></p>
+            <p className="text-slate-700">• Gap kekuatan Timur-Barat yang besar = lebih stabil</p>
+            <p className="text-slate-700">• Konflik merusak ekonomi dan populasi</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-5 shadow border border-blue-200">
+        <h3 className="text-lg font-bold text-slate-800 mb-3">🔍 Pola Sejarah dalam Model</h3>
+        <div className="grid md:grid-cols-2 gap-4 text-sm">
+          <div>
+            <p className="font-semibold text-slate-800 mb-2">Contoh Siklus Hegemon Real:</p>
+            <ul className="space-y-1 text-slate-700">
+              <li>• 1500-1700: Timur (China/Mughal/Ottoman) dominan</li>
+              <li>• 1700-1900: <span className="text-red-600">Transisi brutal</span> - kolonialisme</li>
+              <li>• 1900-2000: Barat (UK → US) hegemon</li>
+              <li>• 2000-2100?: <span className="text-orange-600">Transisi baru</span> - kebangkitan Asia</li>
+            </ul>
+          </div>
+          <div>
+            <p className="font-semibold text-slate-800 mb-2">Kenapa Pergeseran Poros Penting:</p>
+            <ul className="space-y-1 text-slate-700">
+              <li>• Hegemon lama melawan perubahan = konflik</li>
+              <li>• Teknologi baru = power shift (mesiu, industri, AI?)</li>
+              <li>• Ketimpangan adaptasi = internal instability</li>
+              <li>• Siklus ~200-250 tahun = 3 generasi lupa perang terakhir</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-6 p-4 bg-amber-50 rounded-lg border border-amber-300">
+        <p className="text-sm text-slate-700">
+          <span className="font-semibold">💡 Insight Kunci:</span> Krisis besar bukan hanya karena iklim atau bodohnya manusia. 
+          Tapi kombinasi mematikan: <span className="font-semibold text-red-700">pergeseran hegemon + revolusi teknologi + ketimpangan adaptasi + siklus alam</span> yang kebetulan sinkron setiap ~100 tahun. 
+          Ini menjelaskan mengapa pandemi 1920 + Perang Dunia, dan 2020 + ketegangan geopolitik modern terasa seperti "déjà vu" dari siklus sebelumnya.
+        </p>
+      </div>
+    </div>
+  );
+};
+
+export default CivilizationCycleModel;

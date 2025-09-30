@@ -2,9 +2,9 @@
 import React, { useMemo } from 'react';
 
 const StatBox = ({ value, label, colorClass }) => (
-    <div className="bg-gray-800 p-3 sm:p-4 md:p-5 rounded-lg text-center">
+    <div className="bg-black border border-gray-800 p-3 sm:p-4 md:p-5 rounded-lg text-center">
         <div className={`text-2xl sm:text-3xl md:text-3xl font-bold ${colorClass}`}>{value}</div>
-        <div className="text-xs sm:text-sm text-gray-400 mt-1">{label}</div>
+        <div className="text-xs sm:text-sm text-gray-300 mt-1">{label}</div>
     </div>
 );
 

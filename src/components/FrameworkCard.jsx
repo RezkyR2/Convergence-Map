@@ -10,7 +10,7 @@ const StatBar = ({ label, value, colorClass }) => (
   <div className="flex justify-between items-center mb-1.5 sm:mb-2">
     <span className="text-xs sm:text-xs text-gray-400">{label}</span>
     <div className="flex items-center gap-1.5 sm:gap-2">
-      <div className="w-12 sm:w-16 h-1.5 bg-gray-700 rounded-full overflow-hidden">
+      <div className="w-12 sm:w-16 h-1.5 bg-gray-800 rounded-full overflow-hidden">
         <div className={`h-full ${colorClass} transition-all duration-300`} style={{ width: `${value}%` }} />
       </div>
       <span className="text-xs text-gray-300 w-7 sm:w-8 text-right">{value}%</span>
@@ -30,8 +30,8 @@ const FrameworkCard = ({ framework, isPinned, onPin, onShowDetail }) => {
       whileHover={{ scale: 1.02 }}
       transition={{ duration: 0.2 }}
       className={clsx(
-        "bg-gray-800 rounded-lg p-4 sm:p-5 border-2 transition-all duration-300 relative cursor-pointer",
-        isPinned ? 'border-blue-500 shadow-2xl shadow-blue-500/20' : 'border-gray-700 hover:border-red-500'
+        "bg-black rounded-lg p-4 sm:p-5 border-2 transition-all duration-300 relative cursor-pointer",
+        isPinned ? 'border-blue-500 shadow-2xl shadow-blue-500/20' : 'border-gray-800 hover:border-red-500'
       )}
       onClick={(e) => {
         e.stopPropagation();
@@ -66,7 +66,7 @@ const FrameworkCard = ({ framework, isPinned, onPin, onShowDetail }) => {
       </div>
       
       {/* Source dan Indikator Detail */}
-      <div className="mt-3 sm:mt-4 pt-2.5 sm:pt-3 border-t border-gray-700 flex justify-between items-center gap-2">
+      <div className="mt-3 sm:mt-4 pt-2.5 sm:pt-3 border-t border-gray-800 flex justify-between items-center gap-2">
         <p className="text-xs text-gray-500 truncate flex-1 min-w-0">Source: {framework.source}</p>
         {framework.hasDetailView && (
           <div className="flex items-center gap-1 text-blue-400 flex-shrink-0">

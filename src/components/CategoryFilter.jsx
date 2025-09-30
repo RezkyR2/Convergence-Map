@@ -12,7 +12,7 @@ const CategoryFilter = ({ categories, selectedCategory, setSelectedCategory }) =
           'min-h-[44px] px-3 sm:px-4 py-2.5 sm:py-2 text-xs sm:text-sm md:text-base rounded-lg flex items-center gap-1.5 sm:gap-2 transition-all duration-200 font-semibold focus:outline-none focus:ring-2 touch-manipulation',
           selectedCategory === key
             ? `${classes}`
-            : 'bg-gray-700 text-gray-300 hover:bg-gray-600 ring-transparent'
+            : 'bg-gray-900 text-gray-300 hover:bg-gray-800 ring-transparent'
         )}
       >
         <Icon className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />

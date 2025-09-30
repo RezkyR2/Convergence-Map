@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, Cell } from 'recharts';
-import { AlertTriangle, X, TrendingUp, Calendar, Activity } from 'lucide-react';
+import { AlertTriangle, X, TrendingUp, Calendar, Activity, Map, Zap, Award, BarChart3 } from 'lucide-react';
 
 // Import komponen anak
 import { frameworks, categories, getSeverityColor } from './convergenceData';
@@ -11,6 +11,9 @@ import CategoryFilter from './CategoryFilter';
 import FrameworkCard from './FrameworkCard';
 import StatsSummary from './StatsSummary';
 import Timeline from './Timeline';
+import ConvergenceSimulation from './ConvergenceSimulation';
+import WEFSkills2024 from './WEFSkills2024';
+import AnalyticsDashboard from './AnalyticsDashboard';
 
 // Modal Detail untuk Great Depression Resonance
 const ResonanceDetailModal = ({ onClose }) => {
@@ -225,6 +228,7 @@ const ResonanceDetailModal = ({ onClose }) => {
 
 // Komponen utama ConvergenceMap
 const ConvergenceMap = () => {
+  const [activeTab, setActiveTab] = useState('map');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [sortBy, setSortBy] = useState('peak');
   const [pinnedFramework, setPinnedFramework] = useState(null);
@@ -268,61 +272,119 @@ const ConvergenceMap = () => {
     setDetailFramework(null);
   };
 
+  const tabs = [
+    { id: 'map', label: 'Framework Map', icon: Map },
+    { id: 'simulation', label: 'Simulation', icon: Zap },
+    { id: 'skills', label: 'WEF Skills 2024', icon: Award },
+    { id: 'analytics', label: 'Analytics', icon: BarChart3 },
+  ];
+
   return (
     <>
-      <div className="min-h-screen bg-gray-900 text-gray-200 font-sans p-3 sm:p-4 md:p-6 lg:p-8">
-        <div className="max-w-7xl mx-auto">
+      <div className="min-h-screen bg-black text-gray-200 font-sans">
+        <div className="max-w-7xl mx-auto p-3 sm:p-4 md:p-6 lg:p-8">
           {/* Header */}
           <header className="text-center mb-6 sm:mb-8">
             <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-red-400 via-orange-400 to-yellow-400 bg-clip-text text-transparent mb-3 sm:mb-4 px-2">
               Convergence Map 2024-2032
             </h1>
-            <p className="text-sm sm:text-base md:text-lg text-gray-400 max-w-3xl mx-auto px-4">
+            <p className="text-sm sm:text-base md:text-lg text-gray-300 max-w-3xl mx-auto px-4">
               Mapping critical convergence points where multiple crisis frameworks align. 
               Peak convergence in <span className="text-red-400 font-bold">{convergenceInfo.maxPeakYear}</span> with {convergenceInfo.maxCount} overlapping frameworks.
             </p>
           </header>
 
-          {/* Controls */}
-          <div className="sticky top-0 z-10 bg-gray-900/80 backdrop-blur-sm py-3 sm:py-4 mb-6 sm:mb-8">
-            <CategoryFilter 
-              categories={categories}
-              selectedCategory={selectedCategory}
-              setSelectedCategory={setSelectedCategory}
-            />
-            
-            <div className="flex justify-center mt-3 sm:mt-4">
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="bg-gray-800 text-gray-200 px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base rounded-lg border border-gray-700 focus:border-red-500 focus:outline-none"
-              >
-                <option value="peak">Sort by Peak Year</option>
-                <option value="severity">Sort by Severity</option>
-                <option value="confidence">Sort by Confidence</option>
-              </select>
+          {/* Tab Navigation */}
+          <div className="sticky top-0 z-20 bg-black/95 backdrop-blur-sm border-b border-gray-800 mb-6 sm:mb-8 -mx-3 sm:-mx-4 md:-mx-6 lg:-mx-8 px-3 sm:px-4 md:px-6 lg:px-8">
+            <div className="flex gap-1 sm:gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent">
+              {tabs.map(({ id, label, icon: Icon }) => (
+                <button
+                  key={id}
+                  onClick={() => setActiveTab(id)}
+                  className={`flex items-center gap-2 px-3 sm:px-4 md:px-6 py-3 sm:py-3.5 font-medium transition-all duration-200 whitespace-nowrap border-b-2 ${
+                    activeTab === id
+                      ? 'border-red-500 text-white bg-gray-900/50'
+                      : 'border-transparent text-gray-400 hover:text-gray-200 hover:bg-gray-900/30'
+                  }`}
+                >
+                  <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <span className="text-xs sm:text-sm md:text-base">{label}</span>
+                </button>
+              ))}
             </div>
           </div>
-          
-          {/* Timeline Visualization */}
-          <Timeline frameworks={filteredFrameworks} setPinnedFramework={setPinnedFramework} />
-          
-          {/* Framework Cards */}
-          <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {filteredFrameworks.map((framework) => (
-              <FrameworkCard 
-                key={framework.name} 
-                framework={framework}
-                isPinned={pinnedFramework?.name === framework.name && !framework.hasDetailView}
-                onPin={() => handlePinFramework(framework)}
-                onShowDetail={() => handleShowDetail(framework)}
-              />
-            ))}
-          </motion.div>
-          
-          {/* Stats Summary */}
-          <StatsSummary frameworks={frameworks} />
+
+          {/* Tab Content */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              {activeTab === 'map' && (
+                <div>
+                  {/* Controls */}
+                  <div className="mb-6 sm:mb-8">
+                    <CategoryFilter 
+                      categories={categories}
+                      selectedCategory={selectedCategory}
+                      setSelectedCategory={setSelectedCategory}
+                    />
+                    
+                    <div className="flex justify-center mt-3 sm:mt-4">
+                      <select
+                        value={sortBy}
+                        onChange={(e) => setSortBy(e.target.value)}
+                        className="bg-gray-900 text-gray-200 px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base rounded-lg border border-gray-800 focus:border-red-500 focus:outline-none"
+                      >
+                        <option value="peak">Sort by Peak Year</option>
+                        <option value="severity">Sort by Severity</option>
+                        <option value="confidence">Sort by Confidence</option>
+                      </select>
+                    </div>
+                  </div>
+                  
+                  {/* Timeline Visualization */}
+                  <Timeline frameworks={filteredFrameworks} setPinnedFramework={setPinnedFramework} />
+                  
+                  {/* Framework Cards */}
+                  <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                    {filteredFrameworks.map((framework) => (
+                      <FrameworkCard 
+                        key={framework.name} 
+                        framework={framework}
+                        isPinned={pinnedFramework?.name === framework.name && !framework.hasDetailView}
+                        onPin={() => handlePinFramework(framework)}
+                        onShowDetail={() => handleShowDetail(framework)}
+                      />
+                    ))}
+                  </motion.div>
+                  
+                  {/* Stats Summary */}
+                  <StatsSummary frameworks={frameworks} />
+                </div>
+              )}
+
+              {activeTab === 'simulation' && <ConvergenceSimulation />}
+              {activeTab === 'skills' && <WEFSkills2024 />}
+              {activeTab === 'analytics' && <AnalyticsDashboard />}
+            </motion.div>
+          </AnimatePresence>
         </div>
+
+        {/* Footer */}
+        <footer className="mt-12 sm:mt-16 border-t border-gray-900 bg-black">
+          <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-6 sm:py-8">
+            <div className="text-center">
+              <p className="text-sm sm:text-base text-gray-400">
+                Powered by <span className="font-semibold text-gray-200">Quark Intelligence</span>
+              </p>
+              <p className="text-xs text-gray-500 mt-1">© 2024-2025 · Advanced Crisis Framework Analysis</p>
+            </div>
+          </div>
+        </footer>
       </div>
 
       {/* Modal Detail */}
