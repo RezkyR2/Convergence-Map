@@ -57,14 +57,27 @@ const AnalyticsDashboard = () => {
         const cat1Frameworks = frameworks.filter(f => f.category === cats[i]);
         const cat2Frameworks = frameworks.filter(f => f.category === cats[j]);
         
-        let overlapCount = 0;
+        let totalProximityScore = 0;
+        let maxPossibleScore = 0;
+        
         cat1Frameworks.forEach(f1 => {
-          const hasOverlap = cat2Frameworks.some(f2 => Math.abs(f1.peak - f2.peak) <= 2);
-          if (hasOverlap) overlapCount++;
+          cat2Frameworks.forEach(f2 => {
+            const yearDiff = Math.abs(f1.peak - f2.peak);
+            if (yearDiff === 0) {
+              totalProximityScore += 100;
+            } else if (yearDiff === 1) {
+              totalProximityScore += 70;
+            } else if (yearDiff === 2) {
+              totalProximityScore += 40;
+            } else if (yearDiff === 3) {
+              totalProximityScore += 20;
+            }
+            maxPossibleScore += 100;
+          });
         });
         
-        const correlation = Math.min(100, (overlapCount / cat1Frameworks.length) * 100);
-        if (correlation > 10) {
+        const correlation = maxPossibleScore > 0 ? (totalProximityScore / maxPossibleScore) * 100 : 0;
+        if (correlation > 5) {
           correlations.push({
             pair: `${cats[i]}-${cats[j]}`,
             correlation: Math.round(correlation)
@@ -258,7 +271,7 @@ const AnalyticsDashboard = () => {
             ))}
           </div>
           <p className="text-xs text-gray-400 mt-3">
-            Correlation: % of frameworks in first category that peak within 2 years of second category
+            Temporal proximity score: 100% for same-year peaks, 70% for 1-year gap, 40% for 2-year gap, 20% for 3-year gap
           </p>
         </div>
 

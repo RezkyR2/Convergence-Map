@@ -289,8 +289,8 @@ const ConvergenceMap = () => {
               Convergence Map 2024-2032
             </h1>
             <p className="text-sm sm:text-base md:text-lg text-gray-300 max-w-3xl mx-auto px-4">
-              Mapping critical convergence points where multiple crisis frameworks align. 
-              Peak convergence in <span className="text-red-400 font-bold">{convergenceInfo.maxPeakYear}</span> with {convergenceInfo.maxCount} overlapping frameworks.
+              Advanced crisis analysis integrating {frameworks.length} global frameworks, interactive simulations, WEF 2024 workforce trends, and predictive analytics. 
+              <span className="block mt-2 text-red-400 font-semibold">Peak convergence: {convergenceInfo.maxPeakYear} ({convergenceInfo.maxCount} synchronized frameworks)</span>
             </p>
           </header>
 
